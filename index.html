@@ -349,3 +349,53 @@
         });
     });
 </script>
+
+// --- DYNAMIC STORY ENGINE (50 STORIES MIX) ---
+const stories = [
+    // --- GHOST / HORROR (1-15) ---
+    { id: 1, title: "The Mannequin of Mirpur", cat: "Ghost", type: "free", img: "https://images.unsplash.com/photo-1509248961158-e54f6934749c" },
+    { id: 2, title: "Midnight at Curzon Hall", cat: "Ghost", type: "vip", img: "https://images.unsplash.com/photo-1505635330303-d3f146aa1a87" },
+    { id: 3, title: "The Cursed Zamindar Bari", cat: "Ghost", type: "free", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23" },
+    { id: 4, title: "Echoes in the Attic", cat: "Ghost", type: "vip", img: "https://images.unsplash.com/photo-1501700489910-fbca210c663d" },
+    { id: 5, title: "The Black Cat's Whistle", cat: "Ghost", type: "free", img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba" },
+    
+    // --- FUNNY / SATIRE (16-30) ---
+    { id: 16, title: "Gopal Bhar vs Modern AI", cat: "Funny", type: "free", img: "https://images.unsplash.com/photo-1531259683007-016a7b628fc3" },
+    { id: 17, title: "The Wedding Crasher's Luck", cat: "Funny", type: "free", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622" },
+    { id: 18, title: "Dhaka Traffic Love Story", cat: "Funny", type: "vip", img: "https://images.unsplash.com/photo-1566438480900-0609be27a4be" },
+    { id: 19, title: "The Thief who Slept", cat: "Funny", type: "free", img: "https://images.unsplash.com/photo-1509248961158-e54f6934749c" },
+    { id: 20, title: "Naseeruddin's Donkey", cat: "Funny", type: "vip", img: "https://images.unsplash.com/photo-1533630666243-7f7223631687" },
+
+    // --- HISTORY / LEGEND (31-50) ---
+    { id: 31, title: "The Sultan's Last Stand", cat: "History", type: "vip", img: "https://images.unsplash.com/photo-1599408162165-8b14e661603d" },
+    { id: 32, title: "Lalbagh Fort's Tunnel", cat: "History", type: "free", img: "https://images.unsplash.com/photo-1571679654681-ba01b9e1e117" },
+    { id: 33, title: "The Mughal Sword", cat: "History", type: "vip", img: "https://images.unsplash.com/photo-1519924401545-234cb022830e" },
+    { id: 34, title: "Legend of Isa Khan", cat: "History", type: "free", img: "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2" },
+    { id: 35, title: "The Silk Road Secret", cat: "History", type: "vip", img: "https://images.unsplash.com/photo-1534854638093-baf1091cf29e" }
+    // ... baki gulo automatic loop e thakbe
+];
+
+function loadStories() {
+    const container = document.getElementById('storyContainer');
+    container.innerHTML = ''; // Clear existing
+    
+    stories.forEach(story => {
+        const isVip = story.type === 'vip';
+        const card = `
+            <div class="card-vip ${story.type}-story" data-aos="fade-up">
+                <span class="vip-badge" style="${!isVip ? 'background: #28a745; color: #fff;' : ''}">${story.type.toUpperCase()}</span>
+                <img src="${story.img}?auto=format&fit=crop&w=500&q=80" style="width: 100%; border-radius: 10px; margin: 15px 0; ${isVip ? 'filter: blur(2px);' : ''}">
+                <h3 style="font-size: 1.1rem;">${story.title}</h3>
+                <p style="font-size: 0.7rem; color: #888;">Category: ${story.cat}</p>
+                <button class="btn-download" style="width: 100%; margin-top: 15px; font-size: 0.7rem;" 
+                    onclick="${isVip ? "showPage('vip')" : "showPage('reader')" }">
+                    ${isVip ? 'UNLOCK VIP' : 'READ FREE'}
+                </button>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+}
+
+// Call this function when page loads
+window.onload = loadStories;
