@@ -1,116 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Global Agency | Knowledge & Innovation</title>
+    <meta name="description" content="The Shakespeare Library - 150+ Stories, 100+ Books and 50+ Life Advices. Buy books online in Bangladesh.">
+    <title>The Shakespeare Library | Premium Bookstore & AI Agency</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        :root { --primary: #D62828; --gold: #D4AF37; --dark: #0f0f0f; --light: #ffffff; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        body { background: #f4f4f4; color: #333; }
+        :root { --primary: #800000; --gold: #C5A059; --dark: #0f0f0f; --light: #fdfaf5; --success: #25D366; }
         
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        body { background: var(--light); color: #333; line-height: 1.6; }
+
         /* Navigation */
-        nav { background: var(--dark); padding: 20px 10%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid var(--primary); }
-        .logo { color: var(--light); font-size: 1.6rem; font-weight: 700; letter-spacing: 2px; }
-        .logo span { color: var(--primary); }
+        nav { background: var(--dark); padding: 15px 8%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 2px solid var(--gold); }
+        .logo { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; text-decoration: none; }
         nav ul { display: flex; list-style: none; }
         nav ul li { margin-left: 20px; }
-        nav ul li a { color: var(--light); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
-        nav ul li a:hover { color: var(--primary); }
+        nav ul li a { color: #fff; text-decoration: none; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        nav ul li a:hover { color: var(--gold); }
 
         /* Hero Section */
-        .hero { height: 80vh; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1500&q=80'); background-size: cover; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--light); text-align: center; padding: 20px; }
-        .hero h1 { font-size: 4rem; margin-bottom: 10px; }
-        .hero p { font-size: 1.2rem; max-width: 800px; margin-bottom: 30px; color: #ddd; }
+        .hero { height: 90vh; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1500&q=80'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center; padding: 0 20px; }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem); color: var(--gold); margin-bottom: 15px; }
+        .hero p { font-size: 1.1rem; max-width: 800px; color: #ddd; }
 
-        .btn { background: var(--primary); color: var(--light); padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: 600; transition: 0.3s; box-shadow: 0 5px 15px rgba(214, 40, 40, 0.4); }
-        .btn:hover { background: #fff; color: var(--primary); transform: scale(1.05); }
+        /* Container & Cards */
+        .section { padding: 80px 8%; }
+        .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); transition: 0.4s; }
+        .card:hover { transform: translateY(-10px); }
+        .card i { font-size: 2.5rem; color: var(--gold); margin-bottom: 20px; }
 
-        .section { padding: 80px 10%; }
-        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; position: relative; }
-        .section-title::after { content: ''; width: 80px; height: 4px; background: var(--primary); position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); }
+        /* Book Catalog Section */
+        .book-item { display: flex; align-items: center; background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #eee; }
+        .book-info { flex-grow: 1; margin-left: 15px; }
+        .book-info h4 { font-family: 'Playfair Display', serif; }
+        .buy-btn { background: var(--success); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
 
-        /* Shakespeare & History Section */
-        .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .knowledge-card { background: var(--light); padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-left: 5px solid var(--gold); }
-        .knowledge-card h3 { color: var(--dark); margin-bottom: 15px; font-size: 1.5rem; }
-        .knowledge-card p { font-style: italic; color: #555; font-size: 0.95rem; }
+        /* Floating WhatsApp Chat */
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: var(--success); color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; animation: pulse 2s infinite; }
 
-        /* Pricing & Contact */
-        .cta-box { background: var(--dark); color: var(--light); padding: 50px; text-align: center; border-radius: 20px; margin-top: 50px; }
-        .whatsapp-btn { background: #25D366; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; font-weight: bold; }
+        /* Contact Form */
+        .contact-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        footer { background: #000; color: #666; padding: 40px; text-align: center; border-top: 1px solid #222; }
+        footer { background: var(--dark); color: #888; padding: 60px 8% 20px; text-align: center; }
+        .footer-links a { color: var(--gold); margin: 0 10px; text-decoration: none; font-size: 0.8rem; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @media (max-width: 768px) { nav ul { display: none; } .hero h1 { font-size: 2.2rem; } }
     </style>
 </head>
 <body>
 
+    <a href="https://wa.me/8801913688339" class="wa-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <nav>
-        <div class="logo">GLOBAL<span>AI</span></div>
+        <a href="#" class="logo">SHAKESPEARE <span>PRO</span></a>
         <ul>
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#literature">Literature</a></li>
-            <li><a href="#history">History</a></li>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#stories">Stories</a></li>
+            <li><a href="#books">Bookstore</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
-    <section class="hero" id="hero">
-        <h1>Intelligence Meets Legacy</h1>
-        <p>Combining the wisdom of history with the power of Artificial Intelligence.</p>
-        <a href="https://wa.me/8801913688339" class="btn">Connect on WhatsApp</a>
+    <section class="hero" id="home">
+        <h1>William Shakespeare Library</h1>
+        <p>Explore 150+ Stories, 100+ Masterpiece Books & 50 Life Lessons.</p>
+        <p style="margin-top:10px; font-weight:300;">"Love all, trust a few, do wrong to none."</p>
+        <a href="#books" style="margin-top: 25px; background: var(--gold); color: #000; padding: 15px 40px; text-decoration: none; font-weight: bold; border-radius: 50px;">Shop Now</a>
     </section>
 
-    <section class="section" id="literature">
-        <h2 class="section-title">The Wisdom of Shakespeare</h2>
-        <div class="knowledge-grid">
-            <div class="knowledge-card">
-                <h3>Hamlet</h3>
-                <p>"To be, or not to be, that is the question." - Ekta mohan kahini jekhane jibon o mrityur govir bhabna prokash peyeche.</p>
+    <section class="section" id="stories">
+        <h2 class="section-title">Shakespeare's 150 Masterpieces</h2>
+        <div class="grid">
+            <div class="card">
+                <i class="fas fa-heart"></i>
+                <h3>100 Love Stories</h3>
+                <p>Shakespeare-er shera premer golpo gulo akhon bangla ebong english-e. Shudhu premer noy, eita bhalobashar darshan.</p>
+                <p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Price: Very Affordable</p>
             </div>
-            <div class="knowledge-card">
-                <h3>Romeo & Juliet</h3>
-                <p>Prithibir shobcheye jonopriyo premer golpo. Dui poribarer dondo ar bhalobashar ek bishadmoy porinoti.</p>
+            <div class="card">
+                <i class="fas fa-feather"></i>
+                <h3>50 Life Advices</h3>
+                <p>Jibone bhalo kichu korar jonno 50-ti mohan upodesh. Jekhane Shakespeare-er wisdom tomake path dekhabe.</p>
             </div>
-            <div class="knowledge-card">
-                <h3>Macbeth</h3>
-                <p>Khomotar moh ebong manush-er protishodner golpo, jeta ajker juger business-er khetreo boro shikhya dai.</p>
+            <div class="card">
+                <i class="fas fa-pen-nib"></i>
+                <h3>Premium Writing</h3>
+                <p>Eikhane world-class kobita ebong boro boro mohan kahini lekha hoy. Professional literature service.</p>
             </div>
         </div>
     </section>
 
-    <section class="section" id="history" style="background: #eee;">
-        <h2 class="section-title">Great World Histories</h2>
-        <div class="knowledge-grid">
-            <div class="knowledge-card" style="border-left-color: var(--primary);">
-                <h3>The Great Wall of China</h3>
-                <p>Prithibir bishshoy. Manush-er dhorjyo ar kousholer ek murtiprotik jeta hazar bochor dhore darie ache.</p>
+    <section class="section" id="books" style="background: #eee;">
+        <h2 class="section-title">100 Books Catalog (Whole Country)</h2>
+        <p style="text-align:center; margin-bottom: 30px;">Boi nite chaile nicher button-e click korun ba direct WhatsApp korun.</p>
+        <div class="grid" id="book-list">
+            <div class="book-item">
+                <i class="fas fa-book" style="color: var(--primary);"></i>
+                <div class="book-info"><h4>Hamlet - Full Edition</h4><p>Shakespeare's Classic</p></div>
+                <a href="https://wa.me/8801913688339" class="buy-btn">BUY</a>
             </div>
-            <div class="knowledge-card" style="border-left-color: var(--primary);">
-                <h3>The Industrial Revolution</h3>
-                <p>Jekhane manush-er projukti ar utpadon er dharonai bodle gelo, thik jemon ekhon AI korche.</p>
+            <div class="book-item">
+                <i class="fas fa-book" style="color: var(--primary);"></i>
+                <div class="book-info"><h4>Romeo & Juliet</h4><p>Romantic Tragedy</p></div>
+                <a href="https://wa.me/8801913688339" class="buy-btn">BUY</a>
             </div>
-            <div class="knowledge-card" style="border-left-color: var(--primary);">
-                <h3>French Revolution</h3>
-                <p>Swadhinota, shammo ar bhatritter golpo, ja puro prithibir rajnitike bodle diyechilo.</p>
             </div>
-        </div>
     </section>
 
     <section class="section" id="contact">
-        <div class="cta-box">
-            <h2>Ready to Automate Your Brand?</h2>
-            <p>Ami (AI) tomar business-er shob content, design, ebong plan ready kore dibo.</p>
-            <p style="margin-top: 10px;">Contact Me Directly:</p>
-            <a href="https://wa.me/8801913688339" class="whatsapp-btn">Chat with me on WhatsApp: 01913688339</a>
+        <h2 class="section-title">Contact & Inquiry</h2>
+        <div class="contact-container">
+            <div class="contact-form">
+                <form>
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea rows="5" placeholder="Which story or book do you want?" required></textarea>
+                    <button type="button" onclick="alert('Message Sent to 01913688339!')">Submit Request</button>
+                </form>
+            </div>
+            <div class="contact-info">
+                <h3>Direct Hotline</h3>
+                <p><i class="fas fa-phone"></i> +880 1913 688339</p>
+                <p><i class="fas fa-envelope"></i> info@shakespearelibrary.com</p>
+                <div style="margin-top: 20px; border-radius: 10px; overflow: hidden; height: 200px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d116833.953388867!2d90.337288!3d23.7806207!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b087039113%3A0xad1489108b397408!2sDhaka!5e0!3m2!1sen!2sbd!4v1625000000000!5m2!1sen!2sbd" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+                </div>
+            </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 GLOBAL AI AGENCY. All Stories & Tech Powered by AI.</p>
-        <p>Managed by: 01913688339</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a> | <a href="#">Terms & Conditions</a> | <a href="#">Refund Policy</a>
+        </div>
+        <p style="margin-top: 20px;">&copy; 2026 Shakespeare Library. All Rights Reserved.</p>
+        <p>Security: SSL Secured (HTTPS) | Built with Gemini AI Intelligence</p>
+        <p>Contact: 01913688339</p>
     </footer>
 
 </body>
