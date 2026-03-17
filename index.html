@@ -372,8 +372,44 @@
                 <i class="fas fa-paper-plane"></i> PUBLISH TO ARCHIVE
               </button>
              </section>
+             function publishStory() {
+    // ১. Input values gulo dhori
+    const titleInput = document.getElementById('postTitle');
+    const catInput = document.getElementById('postCat');
+    const contentInput = document.getElementById('postContent');
+
+    // ২. Validation: Faka thakle jabe na
+    if (!titleInput.value.trim() || !contentInput.value.trim()) {
+        alert("Bhai, Title ar Story-ta to likhte hobe! Faka post kora jabe na।");
+        return;
+    }
+
+    // ৩. Notun Golper object banai
+    const newStory = {
+        id: stories.length + 1,
+        title: titleInput.value,
+        cat: catInput.value,
+        type: "free", 
+        img: "https://images.unsplash.com/photo-1455390582262-044cdead277a"
+    };
+
+    // ৪. Array-te shobar upore add kori (Unshift magic)
+    stories.unshift(newStory);
+
+    // ৫. Library grid-ke refresh kori (Jate notun golpota dekha jay)
+    loadStories();
+
+    // ৬. SUCCESS ALERT!
+    alert("Shaabash! Tomar saga Archive-e add hoye geche।");
+
+    // ৭. INPUT BOX KHUALI KORI
+    titleInput.value = "";
+    contentInput.value = "";
+
+    // ৮. PAGE SWITCH (Eitai holo 2nd kaj)
+    // Eikhane 'categories' holo tomar Library section-er ID
+    showPage('categories'); 
     
-       }<a href="#creatorStudio" onclick="showPage('creatorStudio')">WRITE STORY</a>
-       <button class="btn-download" style="width: 100%;" onclick="publishStory()">
-       <i class="fas fa-paper-plane"></i> PUBLISH NOW
-       </button>
+    // Smooth scroll to top jate user library-r shuru-te thake
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}<a href="#creatorStudio" onclick="showPage('creatorStudio')">POST STORY</a>
