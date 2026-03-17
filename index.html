@@ -1,190 +1,445 @@
-"use client";
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MagicWand, Paintbrush, Download, CreditCard, 
-  Layout, ShieldCheck, Zap, User, Settings, 
-  LogOut, Star, CheckCircle, Smartphone 
-} from 'lucide-react';
+import { NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
-export default function MasterAISite() {
-  const [page, setPage] = useState('home'); // home, generator, editor, pricing, dashboard, admin
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+export async function POST(req) {
+  try {
+    const { name, style, industry } = await req.json();
+
+    // AI-er jonno pro-level prompt engineering
+    const prompt = `Professional vector logo for "${name}". Industry: ${industry}. Style: ${style}. 
+    Minimalist, flat design, white background, high contrast, 8k resolution. No realistic photos.`;
+
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: prompt,
+      n: 1,
+      size: "1024x1024",
+    });
+
+    return NextResponse.json({ url: response.data[0].url });
+  } catch (error) {
+    return NextResponse.json({ error: "Generation failed" }, { status: 500 });
+  }
+}"use client";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles, Download, Zap } from 'lucide-react';
+
+export default function Home() {
   const [loading, setLoading] = useState(false);
-  const [logoUrl, setLogoUrl] = useState('');
-  const [brandName, setBrandName] = useState('');
+  const [logo, setLogo] = useState(null);
 
-  // AI Generation Logic
-  const handleGenerate = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLogoUrl('https://img.freepik.com/premium-vector/minimalist-logo-design-your-brand_1253202-78440.jpg'); 
-      setLoading(false);
-      setPage('editor');
-    }, 2500);
+  return (
+    <div className="min-h-screen bg-[#050505] text-white">
+      {/* Hero Section */}
+      <section className="pt-32 text-center px-6">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          className="text-6xl md:text-8xl font-black tracking-tighter mb-6 bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent"
+        >
+          AI Diye Banan <br/> <span className="text-blue-600">Premium Logo.</span>
+        </motion.h1>
+
+        {/* Generator Box */}
+        <div className="max-w-3xl mx-auto bg-white/5 p-8 rounded-[2.5rem] border border-white/10 backdrop-blur-xl shadow-2xl">
+          <input 
+            type="text" placeholder="Company Name" 
+            className="w-full bg-black/40 border border-white/10 p-4 rounded-2xl mb-4 outline-none focus:ring-2 ring-blue-500"
+          />
+          <button 
+            onClick={() => setLoading(true)} 
+            className="w-full bg-blue-600 py-5 rounded-2xl font-bold text-xl flex justify-center items-center gap-2 hover:bg-blue-700 transition"
+          >
+            {loading ? "Designing..." : <><Sparkles size={20}/> Logo Generate Korun</>}
+          </button>
+        </div>
+
+        {/* Result Preview */}
+        {logo && (
+          <div className="mt-16 flex flex-col items-center">
+            <img src={logo} className="w-80 h-80 rounded-3xl border-4 border-white/10 shadow-2xl" alt="AI Logo" />
+            <button className="mt-6 bg-green-600 px-8 py-3 rounded-full font-bold">Download HD (SVG)</button>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}"use client";
+import React, { useEffect, useRef, useState } from 'react';
+import { fabric } from 'fabric'; // npm install fabric
+import { Download, Type, Square, Circle, RotateCcw } from 'lucide-react';
+
+export default function LogoEditor() {
+  const canvasRef = useRef(null);
+  const [canvas, setCanvas] = useState(null);
+
+  useEffect(() => {
+    // Canvas initialize kora
+    const fabricCanvas = new fabric.Canvas('logo-canvas', {
+      height: 500,
+      width: 500,
+      backgroundColor: '#ffffff',
+    });
+    setCanvas(fabricCanvas);
+
+    // Initial Example Text
+    const text = new fabric.IText('Your Brand', {
+      left: 150,
+      top: 400,
+      fontFamily: 'Arial',
+      fontSize: 40,
+      fill: '#000000',
+    });
+    fabricCanvas.add(text);
+
+    return () => fabricCanvas.dispose();
+  }, []);
+
+  // Text add korar function
+  const addText = () => {
+    const text = new fabric.IText('New Text', {
+      left: 100,
+      top: 100,
+      fontFamily: 'Helvetica',
+      fill: '#333',
+    });
+    canvas.add(text);
+  };
+
+  // Image Download kora (PNG/SVG)
+  const downloadLogo = () => {
+    const dataURL = canvas.toDataURL({
+      format: 'png',
+      quality: 1,
+    });
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'elite-logo.png';
+    link.click();
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-blue-600 overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-10 flex flex-col items-center">
+      <h1 className="text-3xl font-black mb-8 bg-blue-600 px-6 py-2 rounded-full">Pro Logo Editor</h1>
+
+      <div className="flex gap-10 w-full max-w-6xl">
+        {/* Left Toolbar */}
+        <div className="w-20 flex flex-col gap-6 bg-white/5 p-4 rounded-3xl border border-white/10 items-center">
+          <button onClick={addText} title="Add Text"><Type size={28}/></button>
+          <button onClick={() => canvas.add(new fabric.Rect({width: 50, height: 50, fill: 'blue', left: 50, top: 50}))}><Square size={28}/></button>
+          <button onClick={() => canvas.add(new fabric.Circle({radius: 30, fill: 'red', left: 100, top: 100}))}><Circle size={28}/></button>
+          <button onClick={() => canvas.clear()} className="mt-20 text-red-500"><RotateCcw size={28}/></button>
+        </div>
+
+        {/* Canvas Area */}
+        <div className="flex-1 bg-white rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden flex justify-center items-center">
+          <canvas id="logo-canvas" className="border border-gray-200" />
+        </div>
+
+        {/* Right Properties Panel */}
+        <div className="w-64 bg-white/5 p-6 rounded-3xl border border-white/10 space-y-6">
+          <h3 className="font-bold text-lg border-b border-white/10 pb-2">Properties</h3>
+          <div>
+            <label className="text-xs text-gray-400 block mb-2">Background Color</label>
+            <input type="color" onChange={(e) => canvas.setBackgroundColor(e.target.value, canvas.renderAll.bind(canvas))} className="w-full h-10 rounded cursor-pointer" />
+          </div>
+          <button 
+            onClick={downloadLogo}
+            className="w-full bg-green-600 hover:bg-green-700 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition"
+          >
+            <Download size={20}/> Export PNG
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}"use client";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, ArrowRight, Zap, ShieldCheck, Download, MousePointer2, Layers } from 'lucide-react';
+import confetti from 'canvas-confetti';
+
+export default function EliteSaaS() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [logoReady, setLogoReady] = useState(false);
+
+  // Micro-interaction for Success
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setIsGenerating(false);
+      setLogoReady(true);
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#2563eb', '#ffffff', '#6366f1']
+      });
+    }, 4000);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#020202] text-[#f5f5f7] font-sans selection:bg-blue-500/30">
       
-      {/* 🌐 1. ELITE NAVBAR */}
-      <nav className="fixed w-full z-50 backdrop-blur-2xl bg-black/60 border-b border-white/5 px-6 md:px-12 py-5 flex justify-between items-center">
-        <div className="text-2xl font-black bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 bg-clip-text text-transparent cursor-pointer tracking-tighter" onClick={() => setPage('home')}>
-          LOGO.AI <span className="text-white">PRO</span>
+      {/* 🟢 1. Apple-Style Blur Navbar */}
+      <nav className="fixed w-full z-50 top-0 border-b border-white/5 bg-[#020202]/80 backdrop-blur-md px-10 py-4 flex justify-between items-center">
+        <div className="text-xl font-bold tracking-tight">AI<span className="text-blue-500">LOGO</span>.PRO</div>
+        <div className="hidden md:flex gap-10 text-sm font-medium text-gray-400">
+          <button className="hover:text-white transition-colors">Showcase</button>
+          <button className="hover:text-white transition-colors">Pricing</button>
+          <button className="hover:text-white transition-colors">Enterprise</button>
         </div>
-        <div className="hidden md:flex gap-8 text-sm font-semibold text-gray-400">
-          <button onClick={() => setPage('generator')} className="hover:text-blue-400 transition">AI Generator</button>
-          <button onClick={() => setPage('pricing')} className="hover:text-blue-400 transition">Pricing</button>
-          <button onClick={() => setPage('dashboard')} className="hover:text-blue-400 transition">Dashboard</button>
-          <button onClick={() => setPage('admin')} className="hover:text-red-400 transition text-xs opacity-50">Admin</button>
-        </div>
-        <div className="flex gap-4">
-          <button className="hidden sm:block text-sm font-bold border border-white/10 px-5 py-2 rounded-full hover:bg-white/5 transition">Login</button>
-          <button onClick={() => setPage('generator')} className="bg-blue-600 text-sm font-bold px-6 py-2 rounded-full hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] transition">Start Free</button>
-        </div>
+        <button className="bg-white text-black text-sm font-bold px-6 py-2 rounded-full hover:bg-gray-200 transition-all">Sign In</button>
       </nav>
 
-      <AnimatePresence mode="wait">
-        
-        {/* 🏠 2. HERO SECTION (HOME) */}
-        {page === 'home' && (
-          <motion.section key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-40 pb-20 px-6 text-center">
-            <div className="max-w-5xl mx-auto">
-              <motion.div initial={{ y: 20 }} animate={{ y: 0 }} className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase">
-                Next-Gen AI Branding
-              </motion.div>
-              <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-tight mb-8">
-                Design like a <br/> <span className="bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">Millionaire.</span>
-              </h1>
-              <p className="text-gray-400 text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed">
-                Professional AI logo generator, brand kits, and social media automation. All-in-one platform for elite startups.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-6">
-                <button onClick={() => setPage('generator')} className="bg-white text-black px-12 py-5 rounded-2xl font-black text-xl hover:scale-105 transition shadow-2xl">Start Generating</button>
-                <button onClick={() => setPage('pricing')} className="bg-white/5 border border-white/10 px-12 py-5 rounded-2xl font-black text-xl hover:bg-white/10 transition">View Plans</button>
-              </div>
-            </div>
-            {/* Social Proof */}
-            <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40 grayscale">
-              <div className="font-bold text-2xl italic">FORBES</div>
-              <div className="font-bold text-2xl italic">TECH CRUNCH</div>
-              <div className="font-bold text-2xl italic">WIRED</div>
-              <div className="font-bold text-2xl italic">THE VERGE</div>
-            </div>
-          </motion.section>
-        )}
+      {/* 🟢 2. Hero Section with Advanced Animation */}
+      <section className="relative pt-44 pb-20 px-6 overflow-hidden">
+        {/* Background Glow */}
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/20 blur-[120px] rounded-full -z-10" />
 
-        {/* 🤖 3. AI GENERATOR SYSTEM */}
-        {page === 'generator' && (
-          <motion.section key="gen" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pt-32 px-6 max-w-4xl mx-auto">
-            <div className="bg-gradient-to-b from-white/10 to-transparent border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-3xl backdrop-blur-xl">
-              <h2 className="text-4xl font-black mb-8 flex items-center gap-4">
-                <div className="p-3 bg-blue-600 rounded-2xl"><MagicWand size={28}/></div>
-                AI Logo Brief
-              </h2>
-              <div className="space-y-8">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Company Name</label>
-                  <input type="text" value={brandName} onChange={(e) => setBrandName(e.target.value)} placeholder="e.g. Tesla Motors" className="w-full bg-black/50 border border-white/10 p-5 rounded-2xl focus:ring-2 ring-blue-500 outline-none text-xl font-bold" />
-                </div>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Industry Style</label>
-                    <select className="w-full bg-black/50 border border-white/10 p-5 rounded-2xl outline-none appearance-none">
-                      <option>Minimalist Modern</option>
-                      <option>Luxury & Gold</option>
-                      <option>Cyberpunk / Tech</option>
-                      <option>Retro Vintage</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block">Color Psychology</label>
-                    <select className="w-full bg-black/50 border border-white/10 p-5 rounded-2xl outline-none">
-                      <option>Electric Blue (Trust)</option>
-                      <option>Deep Gold (Wealth)</option>
-                      <option>Matte Black (Power)</option>
-                      <option>Forest Green (Growth)</option>
-                    </select>
-                  </div>
-                </div>
-                <button onClick={handleGenerate} disabled={loading} className="w-full bg-blue-600 py-6 rounded-2xl font-black text-2xl hover:bg-blue-700 transition shadow-[0_20px_40px_rgba(37,99,235,0.3)] flex justify-center items-center gap-4">
-                  {loading ? "AI is Thinking..." : "Generate Million-Dollar Logo"}
-                </button>
-              </div>
-            </div>
-          </motion.section>
-        )}
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/5 border border-white/10 text-xs font-semibold tracking-widest text-blue-400 uppercase">
+              Powered by DALL-E 3 & GPT-4o
+            </span>
+            <h1 className="text-7xl md:text-[100px] font-bold leading-[0.9] tracking-tight mb-8">
+              Beautiful Logos. <br/> <span className="text-gray-500">Crafted by AI.</span>
+            </h1>
+            <p className="text-gray-400 text-lg md:text-2xl max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
+              Design like the world's top 1% brands. Every pixel is generated with professional brand psychology.
+            </p>
 
-        {/* 🎨 4. LOGO EDITOR (PRO LEVEL) */}
-        {page === 'editor' && (
-          <motion.section key="editor" initial={{ opacity: 0, x: 100 }} animate={{ opacity: 1, x: 0 }} className="pt-32 px-6 flex flex-col lg:flex-row gap-10 max-w-7xl mx-auto">
-            <div className="flex-1 bg-white rounded-[3rem] h-[600px] flex items-center justify-center shadow-2xl relative overflow-hidden group">
-              <img src={logoUrl} className="w-80 h-80 object-contain transition-transform group-hover:scale-110" alt="Result" />
-              <div className="absolute top-8 left-8 text-black/10 font-black text-6xl select-none uppercase">EDITOR</div>
-              <div className="absolute bottom-8 right-8 flex gap-3">
-                 <button className="bg-black/5 p-3 rounded-full text-black hover:bg-black/10"><Smartphone size={20}/></button>
-                 <button className="bg-black/5 p-3 rounded-full text-black hover:bg-black/10"><Layout size={20}/></button>
-              </div>
-            </div>
-            <div className="lg:w-96 space-y-6">
-              <div className="bg-white/5 p-8 rounded-[2rem] border border-white/10">
-                <h3 className="text-xl font-black mb-6 flex items-center gap-2"><Paintbrush size={22} className="text-blue-500"/> Editor Tools</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  <button className="flex justify-between items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition font-bold">Change Typography <Zap size={16}/></button>
-                  <button className="flex justify-between items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition font-bold">Adjust Elements <Zap size={16}/></button>
-                  <button className="flex justify-between items-center p-4 bg-white/5 rounded-xl hover:bg-white/10 transition font-bold">Magic BG Remove <Zap size={16}/></button>
-                </div>
-              </div>
-              <button onClick={() => setPage('pricing')} className="w-full bg-green-600 py-6 rounded-[1.5rem] font-black text-xl flex items-center justify-center gap-4 hover:shadow-xl hover:bg-green-700 transition">
-                <Download size={24}/> Download Assets
+            {/* Input & Call to Action */}
+            <div className="flex flex-col md:flex-row justify-center items-center gap-4 max-w-2xl mx-auto p-2 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-xl">
+              <input 
+                type="text" 
+                placeholder="Enter your company name..." 
+                className="w-full bg-transparent px-6 py-3 outline-none text-lg font-medium"
+              />
+              <button 
+                onClick={handleGenerate}
+                className="w-full md:w-auto whitespace-nowrap bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-[1.5rem] font-bold flex items-center justify-center gap-2 transition-all active:scale-95"
+              >
+                {isGenerating ? "Analyzing..." : "Generate Magic"} <ArrowRight size={18}/>
               </button>
             </div>
-          </motion.section>
-        )}
+          </motion.div>
+        </div>
+      </section>
 
-        {/* 💰 5. PRICING SYSTEM */}
-        {page === 'pricing' && (
-          <motion.section key="price" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="pt-32 px-6 pb-20">
-            <h2 className="text-6xl font-black text-center mb-16">Select Plan</h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <PricingCard title="Starter" price="Free" icon={<Zap/>} features={["Standard PNG", "Watermarked", "3 Edits/Day"]} />
-              <PricingCard title="Professional" price="$19" icon={<Star/>} features={["4K HD Assets", "Vector SVG", "Brand Guidelines", "Social Media Kit"]} highlight={true} />
-              <PricingCard title="Elite" price="$49" icon={<ShieldCheck/>} features={["Everything in Pro", "Full Ownership", "Business Cards", "VIP Support"]} />
+      {/* 🟢 3. Advanced Loading Effect (The "Magic" Moment) */}
+      <AnimatePresence>
+        {isGenerating && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center"
+          >
+            <div className="relative w-32 h-32">
+              <div className="absolute inset-0 border-4 border-blue-500/20 rounded-full" />
+              <motion.div 
+                animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                className="absolute inset-0 border-t-4 border-blue-600 rounded-full" 
+              />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <Sparkles size={40} className="text-blue-500 shadow-blue-500 drop-shadow-lg" />
+              </motion.div>
             </div>
-          </motion.section>
+            <p className="mt-10 text-xl font-medium tracking-wide animate-pulse">Designing your elite brand identity...</p>
+          </motion.div>
         )}
-
       </AnimatePresence>
 
-      {/* 🚀 ADMIN/DASHBOARD PLACEHOLDER FOOTER */}
-      <footer className="mt-20 py-10 border-t border-white/5 text-center text-gray-600 text-sm">
-        <div className="flex justify-center gap-6 mb-4">
-          <button onClick={() => setPage('home')}>Terms</button>
-          <button onClick={() => setPage('home')}>Privacy</button>
-          <button onClick={() => setPage('home')}>Affiliate</button>
-        </div>
-        © 2026 LOGO.AI PRO - Global Premium Branding AI.
-      </footer>
+      {/* 🟢 4. Bento Grid Features (For Conversion) */}
+      <section className="max-w-7xl mx-auto px-6 py-40 grid md:grid-cols-3 gap-6">
+        <BentoCard icon={<Zap className="text-yellow-400"/>} title="Flash Speed" desc="Get your full brand identity in under 60 seconds." />
+        <BentoCard icon={<Layers className="text-blue-400"/>} title="Vector Export" desc="Download logos in SVG, PDF, and 4K PNG formats." />
+        <BentoCard icon={<ShieldCheck className="text-green-400"/>} title="Commercial License" desc="Full legal ownership for trademark registration." />
+      </section>
+
     </div>
   );
 }
 
-// Pricing Card Component
-function PricingCard({ title, price, features, icon, highlight = false }) {
+// 🟢 Bento Card Component with Micro-interactions
+function BentoCard({ icon, title, desc }) {
   return (
-    <div className={`p-10 rounded-[2.5rem] border transition-all ${highlight ? 'border-blue-500 bg-blue-500/5 scale-105 shadow-[0_0_50px_rgba(37,99,235,0.2)]' : 'border-white/10 bg-white/5 hover:border-white/20'} flex flex-col`}>
-      <div className="mb-4 text-blue-500">{icon}</div>
-      <h3 className="text-2xl font-black mb-2">{title}</h3>
-      <div className="text-5xl font-black mb-8">{price}<span className="text-lg text-gray-500">/one-time</span></div>
-      <ul className="space-y-4 mb-12 flex-1">
-        {features.map(f => (
-          <li key={f} className="flex items-center gap-3 text-gray-400 font-medium">
-            <CheckCircle size={18} className="text-blue-500"/> {f}
-          </li>
-        ))}
-      </ul>
-      <button className={`w-full py-5 rounded-2xl font-black text-lg transition ${highlight ? 'bg-blue-600 hover:bg-blue-700 shadow-xl' : 'bg-white/10 hover:bg-white/20'}`}>
-        Upgrade Now
-      </button>
+    <motion.div 
+      whileHover={{ y: -10 }}
+      className="p-10 rounded-[2.5rem] bg-[#0a0a0a] border border-white/5 hover:border-blue-500/50 transition-all cursor-pointer group"
+    >
+      <div className="mb-6 p-4 bg-white/5 w-fit rounded-2xl group-hover:scale-110 transition-transform">{icon}</div>
+      <h3 className="text-2xl font-bold mb-3">{title}</h3>
+      <p className="text-gray-500 leading-relaxed font-medium">{desc}</p>
+    </motion.div>
+  );
+}"use client";
+import { motion } from 'framer-motion';
+import { CheckCircle, Download, FileText, Share2 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { useEffect } from 'react';
+
+export default function PaymentSuccess() {
+  useEffect(() => {
+    // Taka dewar por akta 'Millionaire' feel dewar jonno confetti!
+    confetti({
+      particleCount: 200,
+      spread: 100,
+      origin: { y: 0.6 }
+    });
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center px-6">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }} 
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-2xl w-full bg-white/5 border border-white/10 p-12 rounded-[3rem] text-center backdrop-blur-3xl"
+      >
+        <div className="flex justify-center mb-8">
+          <div className="p-4 bg-green-500/20 rounded-full">
+            <CheckCircle size={60} className="text-green-500" />
+          </div>
+        </div>
+        
+        <h1 className="text-5xl font-black mb-4 tracking-tighter">Payment Successful!</h1>
+        <p className="text-gray-400 text-lg mb-10 font-medium">
+          Tomar premium brand identity ready. Niche theke shob assets download koro.
+        </p>
+
+        {/* 📦 Download Assets Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 text-left">
+          <DownloadCard title="Master Logo" format="Vector SVG / 4K PNG" icon={<Download size={20}/>} />
+          <DownloadCard title="Social Media Kit" format="FB, Insta, LinkedIn Sizes" icon={<Share2 size={20}/>} />
+          <DownloadCard title="Brand Guidelines" format="PDF Document" icon={<FileText size={20}/>} />
+          <DownloadCard title="Commercial License" format="Legal Ownership PDF" icon={<CheckCircle size={20}/>} />
+        </div>
+
+        <button className="w-full bg-white text-black py-5 rounded-2xl font-black text-xl hover:bg-gray-200 transition-all">
+          Go to Dashboard
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
+function DownloadCard({ title, format, icon }) {
+  return (
+    <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex justify-between items-center group hover:border-blue-500/50 cursor-pointer transition-all">
+      <div>
+        <h4 className="font-bold text-white">{title}</h4>
+        <p className="text-xs text-gray-500">{format}</p>
+      </div>
+      <div className="text-blue-500 group-hover:scale-125 transition-transform">{icon}</div>
+    </div>
+  );
+}import Stripe from 'stripe';
+import { buffer } from 'node:stream/consumers';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+export async function POST(req) {
+  const sig = req.headers.get('stripe-signature');
+  const body = await req.text();
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    // Database-e user-er subscription 'active' kore dao
+    // await updateUserSubscription(session.customer_details.email);
+  }
+
+  return new Response('Success', { status: 200 });
+}"use client";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Share2, Layout, Image as ImageIcon, CheckCircle } from 'lucide-react';
+
+const SIZES = [
+  { name: 'Instagram Post', w: 1080, h: 1080, id: 'ig-post' },
+  { name: 'Facebook Cover', w: 820, h: 312, id: 'fb-cover' },
+  { name: 'LinkedIn Banner', w: 1584, h: 396, id: 'li-banner' },
+  { name: 'Twitter Header', w: 1500, h: 500, id: 'tw-header' }
+];
+
+export default function SocialMediaKit({ logoUrl = "https://via.placeholder.com/500" }) {
+  const [generating, setGenerating] = useState(false);
+
+  const generateAllAssets = () => {
+    setGenerating(true);
+    // Real life-e ekhane Canvas.toDataURL() use hoye shob download hobe
+    setTimeout(() => setGenerating(false), 3000);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#020202] text-white pt-32 px-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-end mb-12">
+          <div>
+            <span className="text-blue-500 font-bold text-sm tracking-widest uppercase">Elite Feature</span>
+            <h1 className="text-5xl font-black mt-2">Social Media Kit</h1>
+          </div>
+          <button 
+            onClick={generateAllAssets}
+            className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-2xl font-bold flex items-center gap-3 transition-all"
+          >
+            {generating ? "Syncing..." : <><Share2 size={20}/> Generate All Kits</>}
+          </button>
+        </div>
+
+        {/* Assets Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {SIZES.map((size) => (
+            <motion.div 
+              key={size.id}
+              whileHover={{ y: -5 }}
+              className="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden group"
+            >
+              {/* Preview Box */}
+              <div 
+                className="bg-gradient-to-br from-gray-800 to-black flex items-center justify-center relative group-hover:from-blue-900/20 transition-all"
+                style={{ height: '240px' }}
+              >
+                {/* Simulated Auto-Generated Banner */}
+                <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                <div className="z-10 flex flex-col items-center">
+                    <img src={logoUrl} className="w-20 h-20 mb-4 object-contain filter drop-shadow-2xl" alt="logo" />
+                    <p className="text-[10px] tracking-[0.5em] uppercase text-gray-500">Premium Brand Identity</p>
+                </div>
+                
+                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold">
+                  {size.w} x {size.h}
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="p-6 flex justify-between items-center">
+                <div>
+                  <h3 className="font-bold text-lg">{size.name}</h3>
+                  <p className="text-sm text-gray-500">Optimized for platform standards</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-full text-blue-500">
+                  <CheckCircle size={24} />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
