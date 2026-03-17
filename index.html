@@ -412,4 +412,57 @@
     
     // Smooth scroll to top jate user library-r shuru-te thake
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}<a href="#creatorStudio" onclick="showPage('creatorStudio')">POST STORY</a>
+}<a href="#creatorStudio" onclick="showPage('creatorStudio')">POST STORY</a><div style="padding: 20px 8%; text-align: center;">
+    <div style="position: relative; max-width: 600px; margin: 0 auto 30px;">
+        <input type="text" id="storySearch" placeholder="Search for legends, ghosts, or myths..." 
+            onkeyup="searchStories()"
+            style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--gold); padding: 15px 50px 15px 20px; border-radius: 30px; color: white; outline: none; backdrop-filter: blur(10px);">
+        <i class="fas fa-search" style="position: absolute; right: 20px; top: 18px; color: var(--gold);"></i>
+    </div>
+</div>function loadStories() {
+    const container = document.getElementById('storyContainer');
+    container.innerHTML = ''; 
+    
+    stories.forEach(story => {
+        const isVip = story.type === 'vip';
+        // Random reading time logic (3-10 min)
+        const readTime = Math.floor(Math.random() * 7) + 3; 
+
+        container.innerHTML += `
+            <div class="card-vip story-card" data-category="${story.cat}">
+                <div class="badge-row" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="vip-badge" style="${story.type === 'free' ? 'background: #28a745;' : ''}">${story.type.toUpperCase()}</span>
+                    <span style="color: #666; font-size: 0.7rem;"><i class="far fa-clock"></i> ${readTime} MIN READ</span>
+                </div>
+                
+                <div style="overflow: hidden; border-radius: 10px; margin: 15px 0;">
+                    <img src="${story.img}?auto=format&fit=crop&w=500&q=80" 
+                        style="width: 100%; height: 200px; object-fit: cover; transition: 0.5s; ${isVip ? 'filter: blur(4px);' : ''}">
+                </div>
+
+                <h3 style="font-family: 'Playfair Display'; color: var(--gold); margin-bottom: 5px;">${story.title}</h3>
+                <p style="font-size: 0.75rem; color: #888; margin-bottom: 15px;">A thrilling ${story.cat} saga from the heart of the archive.</p>
+                
+                <button class="btn-download" style="width: 100%; border-radius: 5px;" 
+                    onclick="${isVip ? "showPage('vip')" : "showPage('reader')" }">
+                    ${isVip ? '<i class="fas fa-lock"></i> UNLOCK SAGA' : 'READ NOW'}
+                </button>
+            </div>
+        `;
+    });
+}
+
+// --- SEARCH FUNCTION ---
+function searchStories() {
+    let input = document.getElementById('storySearch').value.toLowerCase();
+    let cards = document.getElementsByClassName('story-card');
+
+    for (let i = 0; i < cards.length; i++) {
+        let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+        if (title.includes(input)) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
