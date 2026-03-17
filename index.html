@@ -380,27 +380,5 @@
         </div>
     </div>
 </section>
-    }
-    // Create a new story object
-    const newStory = {
-        id: stories.length + 1,
-        title: title,
-        cat: cat,
-        type: "free", // User posts are free by default
-        img: "https://images.unsplash.com/photo-1455390582262-044cdead277a" // Default ink/pen image
-    };
-
-    // Add to our main stories array
-    stories.unshift(newStory); // unshift adds to the beginning
-
-    // Refresh the Library
-    loadStories();
-
-    // Show Success Animation
-    alert("Congratulations! Your story has been archived in the Sovereign Library.");
     
-    // Clear Fields & Redirect
-    document.getElementById('postTitle').value = "";
-    document.getElementById('postContent').value = "";
-    showPage('reader'); // Take them to library to see their post
 }<a href="#creatorStudio" onclick="showPage('creatorStudio')">WRITE STORY</a>
