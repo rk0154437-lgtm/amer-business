@@ -252,4 +252,25 @@
         }
     </script>
 </body>
-</html>
+</html><nav>
+    <a href="#home" class="logo gold-shimmer" onclick="showPage('home')" style="font-size: 1.5rem; font-weight: 900; text-decoration: none;">SHAKESPEARE ELITE</a>
+    
+    <div class="nav-links" style="display: flex; gap: 25px; align-items: center;">
+        <a href="#home" onclick="showPage('home')" style="text-decoration:none; color:var(--text-dim); font-size:0.8rem; font-weight:600; transition:0.3s;">HOME</a>
+        <a href="#reader" onclick="showPage('reader')" style="text-decoration:none; color:var(--text-dim); font-size:0.8rem; font-weight:600; transition:0.3s;">LIBRARY</a>
+        <a href="#vip" onclick="showPage('vip')" style="text-decoration:none; color:var(--text-dim); font-size:0.8rem; font-weight:600; transition:0.3s;">VIP PASS</a>
+        <a href="#dashboard" onclick="showPage('dashboard')" style="text-decoration:none; color:var(--text-dim); font-size:0.8rem; font-weight:600; transition:0.3s;">DASHBOARD</a>
+        
+        <div style="height: 20px; width: 1px; background: var(--glass-border); margin: 0 10px;"></div>
+        
+        <i class="fas fa-user-circle" onclick="showPage('dashboard')" style="font-size: 1.5rem; color: var(--gold); cursor: pointer;"></i>
+    </div>
+</nav>
+
+<style>
+    /* Menu Hover Effect */
+    .nav-links a:hover {
+        color: var(--gold) !important;
+        text-shadow: 0 0 10px var(--gold-glow);
+    }
+</style>
